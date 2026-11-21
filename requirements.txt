@@ -1,0 +1,5 @@
+# Tested syntax; versions match your installed Python package versions.
+langgraph==1.2.23
+langchain-ollama==1.1.0
+ddgs==9.16.1
+streamlit>=1.40,<2
