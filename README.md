@@ -1,15 +1,111 @@
-# Agentic AI Research Assistant — Fast Fix
 
-This optimized version fixes the long-loading experience by eliminating the optional additional research pass and using **two local Qwen3 model calls instead of four to six**. Its five LangGraph stages are: query planning (rules), web research (DDGS), AI analysis (Ollama), evidence review (rules), report writing (Ollama).
+# Agentic AI Research Assistant
 
-## Update your existing Windows project
-1. Stop your old Streamlit process with **Ctrl+C** in the VS Code terminal.
-2. Extract this ZIP to `C:\Users\sathi\agentic-research-assistant`; replace existing project files. **Do not delete `venv`.**
-3. In VS Code terminal, launch with ` .\venv\Scripts\python.exe -m streamlit run app.py `, then click Research **once**.
+A local research assistant built with Python, LangGraph, Ollama, and Streamlit.
 
-All packages are the same as before. No reinstall is necessary. No PowerShell activation is necessary. If a run fails, the browser shows an error message. The interface displays progress by stage and keeps the most recently generated report.
+The application takes a research question, retrieves relevant web search results, organizes the evidence, and generates a structured report with source references.
 
-## Reality check
-Your laptop's CPU may still take some time to run Qwen3 4B. The interface now shows its stage instead of a single indefinite spinner, but an unusually slow or blocked Ollama model can still delay completion. You can verify Ollama is responsive with `ollama run qwen3:4b` in a separate terminal.
+I developed this project to explore workflow orchestration with LangGraph and the practical challenges of running language models locally.
 
-These are **search snippets**, not fact-checked full articles. Verify citations manually before relying on the content. The app uses free, locally downloaded models and public web search (subject to internet access/rate limits).
+## Tech Stack
+
+- Python
+- LangGraph
+- LangChain Ollama
+- Qwen3 4B
+- DuckDuckGo Search (DDGS)
+- Streamlit
+
+## How It Works
+
+The application uses a five-stage workflow:
+
+1. **Planning** - Generates search queries from the research topic.
+2. **Research** - Retrieves search results and removes duplicate URLs.
+3. **Analysis** - Organizes the retrieved evidence.
+4. **Review** - Checks source coverage and records search limitations.
+5. **Report Generation** - Uses a local language model to generate a structured Markdown report.
+
+LangGraph manages the execution order and shared workflow state.
+
+The planning, analysis, and review stages use deterministic Python logic. The report generation stage uses Ollama.
+
+## Project Structure
+
+    agentic-ai-research-assistant/
+    ├── app.py
+    ├── main.py
+    ├── research_workflow.py
+    ├── requirements.txt
+    ├── tests/
+    │   └── test_workflow.py
+    └── README.md
+
+## Installation
+
+### Prerequisites
+
+- Python 3.10 or later
+- Ollama installed locally
+- Internet connection for web searches
+
+### 1. Clone the repository
+
+    git clone https://github.com/satishvepuri/agentic-ai-research-assistant.git
+    cd agentic-ai-research-assistant
+
+### 2. Create a virtual environment
+
+    python -m venv venv
+
+### 3. Install dependencies (Windows)
+
+    .\venv\Scripts\python.exe -m pip install -r requirements.txt
+
+### 4. Download the model
+
+    ollama pull qwen3:4b
+
+### 5. Run the application
+
+    .\venv\Scripts\python.exe -m streamlit run app.py
+
+Open the local URL displayed in the terminal.
+
+## Testing
+
+Run the workflow tests with:
+
+    .\venv\Scripts\python.exe -m unittest discover -s tests -v
+
+The tests use mock model and search responses, so they do not require a live Ollama model or web search.
+
+## Design Decisions
+
+**Local inference**
+
+Ollama was selected to avoid dependency on paid model APIs and to experiment with local inference.
+
+**Bounded execution**
+
+The workflow performs one research pass instead of repeatedly searching and generating responses. This limits unnecessary model calls.
+
+**Source transparency**
+
+Generated reports include the links retrieved during web search. The application does not independently verify the full contents of those pages.
+
+## Known Limitations
+
+- Research quality depends on search-result snippets.
+- Local model inference can be slow on CPU-only systems.
+- Search requests may occasionally fail or return limited results.
+- Reports may fall back to a structured summary when the model output does not match the expected format.
+- The workflow is predefined rather than a fully autonomous multi-agent system.
+
+## Future Improvements
+
+- Retrieve and analyze full webpage content.
+- Add source relevance scoring.
+- Improve report generation reliability.
+- Benchmark smaller local models.
+- Add automated evaluation for report quality.
