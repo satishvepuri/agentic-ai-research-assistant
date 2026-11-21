@@ -262,7 +262,7 @@ def build_graph(
         }
 
    
-    # STAGE 3: ANALYST — FAST VERSION
+    # Organize retrieved evidence for report generation.
 
     def analyst(state: ResearchState) -> dict:
         notify("[3/5] Analyzing the results...")
